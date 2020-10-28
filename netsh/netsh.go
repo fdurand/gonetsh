@@ -157,7 +157,7 @@ func (runner *runner) getIpAddressConfigurations() ([]Ipv4Interface, error) {
 				currentInterface.IpAddress = value
 			} else if strings.HasPrefix(key, "Default Gateway") {
 				currentInterface.DefaultGatewayAddress = value
-			} else if string.HashPrefix(key, "Statically Configured DNS Servers") {
+			} else if strings.HasPrefix(key, "Statically Configured DNS Servers") {
 				currentInterface.StaticDNSServers = value
 			}
 		}
