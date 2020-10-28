@@ -338,3 +338,16 @@ func (runner *runner) GetInterfaceByIP(ipAddr string) (Ipv4Interface, error) {
 func (runner *runner) Restore(args []string) error {
 	return nil
 }
+
+// Enable forwarding on the interface (name or index)
+func (runner *runner) SetDNSServer(iface string) error {
+	args := []string{
+		"interface", "ipv4", "set", "dnsservers", "name=" + strconv.Quote(iface), "source=static", "127.0.0.69", "primary",
+	}
+	cmd := strings.Join(args, " ")
+	if stdout, err := runner.exec.Command(cmdNetsh, args...).CombinedOutput(); err != nil {
+		return fmt.Errorf("failed to set dns servers on [%v], error: %v. cmd: %v. stdout: %v", iface, err.Error(), cmd, string(stdout))
+	}
+
+	return nil
+}
