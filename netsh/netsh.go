@@ -100,7 +100,7 @@ func (runner *runner) GetInterfaces() ([]Ipv4Interface, error) {
 // GetInterfaces uses the show addresses command and returns a formatted structure
 func (runner *runner) getIpAddressConfigurations() ([]Ipv4Interface, error) {
 	args := []string{
-		"interface", "ipv4", "show", "addresses",
+		"interface", "ipv4", "show", "config",
 	}
 
 	output, err := runner.exec.Command(cmdNetsh, args...).CombinedOutput()
