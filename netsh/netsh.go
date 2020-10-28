@@ -33,6 +33,8 @@ type Interface interface {
 	GetInterfaceByIP(ipAddr string) (Ipv4Interface, error)
 	// Enable forwarding on the interface (name or index)
 	EnableForwarding(iface string) error
+	// Set DNS server on this interface (name or index)
+	SetDNSServer(iface string) error
 }
 
 const (
