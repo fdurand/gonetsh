@@ -9,7 +9,6 @@ import (
 
 	"errors"
 
-	"github.com/davecgh/go-spew/spew"
 	utilexec "k8s.io/utils/exec"
 )
 
@@ -69,13 +68,13 @@ func New(exec utilexec.Interface) Interface {
 	runner := &runner{
 		exec: exec,
 	}
-	spew.Dump("Runner")
+
 	return runner
 }
 
 func (runner *runner) GetInterfaces() ([]Ipv4Interface, error) {
 	interfaces, interfaceError := runner.getIpAddressConfigurations()
-	spew.Dump("ICI")
+
 	if interfaceError != nil {
 		return nil, interfaceError
 	}
