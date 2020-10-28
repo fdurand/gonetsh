@@ -342,9 +342,9 @@ func (runner *runner) Restore(args []string) error {
 }
 
 // Enable forwarding on the interface (name or index)
-func (runner *runner) SetDNSServer(iface string) error {
+func (runner *runner) SetDNSServer(iface string, dns string) error {
 	args := []string{
-		"interface", "ipv4", "set", "dnsservers", "name=" + strconv.Quote(iface), "source=static", "127.0.0.69", "primary",
+		"interface", "ipv4", "set", "dnsservers", "name=" + strconv.Quote(iface), "source=static", strconv.Quote(dns), "primary",
 	}
 	cmd := strings.Join(args, " ")
 	if stdout, err := runner.exec.Command(cmdNetsh, args...).CombinedOutput(); err != nil {
