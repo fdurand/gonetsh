@@ -107,8 +107,7 @@ func (runner *runner) getIpAddressConfigurations() ([]Ipv4Interface, error) {
 	}
 
 	output, err := runner.exec.Command(cmdNetsh, args...).CombinedOutput()
-	spew.Dump("after")
-	return nil, err
+
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +175,7 @@ func (runner *runner) getIpAddressConfigurations() ([]Ipv4Interface, error) {
 	if len(interfaces) == 0 {
 		return nil, fmt.Errorf("no interfaces found in netsh output: %v", interfacesString)
 	}
-
+	spew.Dump(interfaces)
 	return interfaces, nil
 }
 
