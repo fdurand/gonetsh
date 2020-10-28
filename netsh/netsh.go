@@ -69,6 +69,7 @@ func New(exec utilexec.Interface) Interface {
 	runner := &runner{
 		exec: exec,
 	}
+	spew.Dump("Runner")
 	return runner
 }
 
