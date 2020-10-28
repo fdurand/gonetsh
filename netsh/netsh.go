@@ -105,7 +105,7 @@ func (runner *runner) getIpAddressConfigurations() ([]Ipv4Interface, error) {
 	args := []string{
 		"interface", "ipv4", "show", "config",
 	}
-
+	return nil, nil
 	output, err := runner.exec.Command(cmdNetsh, args...).CombinedOutput()
 	return nil, err
 	if err != nil {
