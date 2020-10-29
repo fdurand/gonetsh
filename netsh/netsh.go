@@ -37,6 +37,8 @@ type Interface interface {
 	SetDNSServer(dns string) error
 	// Reset DNS server on this interface (name or index)
 	ResetDNSServer() error
+	// SetInterfaceDNSConfig(Int Ipv4Interface)
+	SetInterfaceDNSConfig(Int Ipv4Interface)
 }
 
 const (
@@ -374,4 +376,8 @@ func (runner *runner) ResetDNSServer() error {
 		return fmt.Errorf("failed to reset dns servers on [%v], error: %v. cmd: %v. stdout: %v", runner.InterFaceDNSConfig.Name, err.Error(), cmd, string(stdout))
 	}
 	return nil
+}
+
+func (runner *runner) SetInterfaceDNSConfig(Int Ipv4Interface) {
+	runner.InterFaceDNSConfig = Int
 }
