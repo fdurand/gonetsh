@@ -34,9 +34,9 @@ type Interface interface {
 	// Enable forwarding on the interface (name or index)
 	EnableForwarding(iface string) error
 	// Set DNS server on this interface (name or index)
-	SetDNSServer(iface string, dns string) error
+	SetDNSServer(dns string) error
 	// Reset DNS server on this interface (name or index)
-	ResetDNSServer(iface string) error
+	ResetDNSServer() error
 }
 
 const (
@@ -45,8 +45,9 @@ const (
 
 // runner implements Interface in terms of exec("netsh").
 type runner struct {
-	mu   sync.Mutex
-	exec utilexec.Interface
+	mu                 sync.Mutex
+	exec               utilexec.Interface
+	InterFaceDNSConfig Ipv4Interface
 }
 
 // Ipv4Interface models IPv4 interface output from: netsh interface ipv4 show addresses
@@ -344,27 +345,33 @@ func (runner *runner) Restore(args []string) error {
 }
 
 // Set DNS server on the interface (name or index)
-func (runner *runner) SetDNSServer(iface string, dns string) error {
+func (runner *runner) SetDNSServer(dns string) error {
 	args := []string{
-		"interface", "ipv4", "set", "dnsservers", "name=" + strconv.Quote(iface), "source=static", strconv.Quote(dns), "primary",
+		"interface", "ipv4", "set", "dnsservers", "name=" + strconv.Quote(runner.InterFaceDNSConfig.Name), "source=static", strconv.Quote(dns), "primary",
 	}
 	cmd := strings.Join(args, " ")
 	if stdout, err := runner.exec.Command(cmdNetsh, args...).CombinedOutput(); err != nil {
-		return fmt.Errorf("failed to set dns servers on [%v], error: %v. cmd: %v. stdout: %v", iface, err.Error(), cmd, string(stdout))
+		return fmt.Errorf("failed to set dns servers on [%v], error: %v. cmd: %v. stdout: %v", runner.InterFaceDNSConfig.Name, err.Error(), cmd, string(stdout))
 	}
 
 	return nil
 }
 
 // Reset DNS on the interface (name or index)
-func (runner *runner) ResetDNSServer(iface string) error {
-	args := []string{
-		"interface", "ipv4", "set", "dnsservers", "name=" + strconv.Quote(iface), "source=dhcp",
+func (runner *runner) ResetDNSServer() error {
+	var args []string
+	if runner.InterFaceDNSConfig.StaticDNSServers != "" {
+		args = []string{
+			"interface", "ipv4", "set", "dnsservers", "name=" + strconv.Quote(runner.InterFaceDNSConfig.Name), "source=static", strconv.Quote(runner.InterFaceDNSConfig.StaticDNSServers), "primary",
+		}
+	} else {
+		args = []string{
+			"interface", "ipv4", "set", "dnsservers", "name=" + strconv.Quote(runner.InterFaceDNSConfig.Name), "source=dhcp",
+		}
 	}
 	cmd := strings.Join(args, " ")
 	if stdout, err := runner.exec.Command(cmdNetsh, args...).CombinedOutput(); err != nil {
-		return fmt.Errorf("failed to reset dns servers on [%v], error: %v. cmd: %v. stdout: %v", iface, err.Error(), cmd, string(stdout))
+		return fmt.Errorf("failed to reset dns servers on [%v], error: %v. cmd: %v. stdout: %v", runner.InterFaceDNSConfig.Name, err.Error(), cmd, string(stdout))
 	}
-
 	return nil
 }
